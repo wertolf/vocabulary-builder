@@ -13,9 +13,9 @@ from . import core
 from . import color
 from . import dot
 
-from ...general import RuntimeUnit
-from ...general.ui import resolution_info as res
-from ...general.ui import Control
+from ....framework.core import RuntimeUnit
+from ....framework.ui import resolution_info as res
+from ....framework.ui import Control
 
 
 # pygame时钟，与fps结合，用于控制刷新频率

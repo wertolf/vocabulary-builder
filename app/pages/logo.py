@@ -1,11 +1,11 @@
-from .. import RuntimeUnit
-from ..general.constants import font_theme
-from ..general.ui import StaticLabel, Page
-from typing import NoReturn
+from framework.core import RuntimeUnit
+from framework.ui import StaticLabel, Page
+
+from config import font_theme
 
 
 class Logo(Page):
-    def __init__(self, rtu: RuntimeUnit) -> NoReturn:
+    def __init__(self, rtu: RuntimeUnit):
         Page.__init__(self, rtu)
 
         self.register_controls(
@@ -21,7 +21,8 @@ class Logo(Page):
             ),
         )
 
-    def run(self) -> NoReturn:
+    def run(self):
         self.draw_and_flip()
+
         # full-screen fade-out
         self.rtu.present_fade_out(self.screen, click_optional=True, count_down=1500)

@@ -12,6 +12,12 @@ python main.py
 
 你可以在软件的运行过程中随时按右上角的 `X` 按钮退出。如果无法退出，可以在命令行界面按 `Ctrl` 加 `C` 组合键发送键盘中断。
 
+### 调试
+
+```
+python -m pdb main.py
+```
+
 ## 设计思想概述 & 点评 & 经验总结
 
 虽然本作相比于[上一部作品](https://github.com/wertolf/draw-card-life)在

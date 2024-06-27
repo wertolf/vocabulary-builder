@@ -1,13 +1,12 @@
-from ..general import RuntimeUnit
-from ..general.constants import color_theme, font_theme, resolution_info
-from ..general.ui import (
+from framework.core import RuntimeUnit
+from config import color_theme, font_theme
+from framework.ui import (
     StaticLabel, LabelButton, Page, TemporaryPageWithButtons,
 )
-from typing import NoReturn
 
 
 class Settings(TemporaryPageWithButtons):
-    def __init__(self, rtu: RuntimeUnit) -> NoReturn:
+    def __init__(self, rtu: RuntimeUnit) -> None:
         TemporaryPageWithButtons.__init__(self, rtu)
 
         # construct controls and add them to corresponding groups
@@ -46,37 +45,37 @@ class Settings(TemporaryPageWithButtons):
 # 之所以重新定义类，是为了在这个脚本内部定制command方法
 # 当然，这样做的一个副作用是，可以在__init__方法中将button的参数设置好
 class Button1(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         # 在Settings.__init__中配置按钮的位置参数
         LabelButton.__init__(
             self,
             content="是", font=font_theme.ui, size=10,
         )
 
-    def command(self, page: Page) -> NoReturn:
+    def command(self, page: Page) -> None:
         pass
 
 
 class Button2(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         # 在Settings.__init__中配置按钮的位置参数
         LabelButton.__init__(
             self,
             content="否", font=font_theme.ui, size=10,
         )
 
-    def command(self, page: Page) -> NoReturn:
+    def command(self, page: Page) -> None:
         pass
 
 
 class Button3(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         # 在Settings.__init__中配置按钮的位置参数
         LabelButton.__init__(
             self,
             content="返回", font=font_theme.ui, size=10,
         )
 
-    def command(self, page: Page) -> NoReturn:
+    def command(self, page: Page) -> None:
         print(f"[Button3] clicked.")
         page.is_alive = False

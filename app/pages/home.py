@@ -1,16 +1,15 @@
-from ..general import RuntimeUnit
-from ..general.constants import color_theme, font_theme, resolution_info
-from ..general.ui import StaticLabel, LabelButton, PageWithButtons
-from .game import Game
+from framework.core import RuntimeUnit
+from framework.ui import StaticLabel, LabelButton, PageWithButtons
+from config import color_theme, font_theme
+# from .game import Game
 from .settings import Settings
-from .letsjump import Demo  # 跳棋游戏演示界面
-from typing import NoReturn
+# from .letsjump import Demo  # 跳棋游戏演示界面
 import pygame
 import sys
 
 
 class Home(PageWithButtons):
-    def __init__(self, rtu: RuntimeUnit) -> NoReturn:
+    def __init__(self, rtu: RuntimeUnit) -> None:
         PageWithButtons.__init__(self, rtu)
 
         # construct controls and add them to corresponding groups
@@ -44,14 +43,14 @@ class Home(PageWithButtons):
 # 之所以重新定义类，是为了在这个脚本内部定制command方法
 # 当然，这样做的一个副作用是，可以在__init__方法中将button的参数设置好
 class Button1(LabelButton):
-    def __init__(self, **kwargs) -> NoReturn:
+    def __init__(self, **kwargs) -> None:
         LabelButton.__init__(
             self,
             content="开始", font=font_theme.ui, size=10,
             **kwargs,
         )
 
-    def command(self, page: PageWithButtons) -> NoReturn:
+    def command(self, page: PageWithButtons) -> None:
         page.rtu.present_full_screen_fade_out()
         Game(page.rtu).run()
 
@@ -61,7 +60,7 @@ class Button1(LabelButton):
 
 
 class Button2(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         LabelButton.__init__(
             self,
             content="设置", font=font_theme.ui, size=10,
@@ -69,7 +68,7 @@ class Button2(LabelButton):
 
         self.is_disabled = True
 
-    def command(self, page: PageWithButtons) -> NoReturn:
+    def command(self, page: PageWithButtons) -> None:
         # 不同于前两个页面，“设置”页面绘制之前不需要“淡出”原屏幕
         # 当然也完全可以“淡出"，这里是在尝试另一种可能性
         Settings(page.rtu).run()
@@ -80,13 +79,13 @@ class Button2(LabelButton):
 
 
 class Button3(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         LabelButton.__init__(
             self,
             content="跳棋小游戏", font=font_theme.ui, size=10,
         )
 
-    def command(self, page: PageWithButtons) -> NoReturn:
+    def command(self, page: PageWithButtons) -> None:
         page.rtu.present_full_screen_fade_out()
         Demo(page.rtu).run()
 
@@ -96,11 +95,11 @@ class Button3(LabelButton):
 
 
 class Button4(LabelButton):
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         LabelButton.__init__(
             self,
             content="退出", font=font_theme.ui, size=10,
         )
 
-    def command(self, page: PageWithButtons) -> NoReturn:
+    def command(self, page: PageWithButtons) -> None:
         page.rtu.end_program()

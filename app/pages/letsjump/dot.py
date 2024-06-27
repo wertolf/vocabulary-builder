@@ -3,7 +3,7 @@ import pygame
 
 from .vector import Vector2D
 
-from ...general.constants import resolution_info as res
+from ....framework.io import resolution_info as res
 
 o: Vector2D  # 棋盘坐标系的原点，像素坐标系的中心
 

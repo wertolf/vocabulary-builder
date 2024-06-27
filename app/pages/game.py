@@ -1,9 +1,9 @@
-from ..general import RuntimeUnit
-from ..general.constants import (
+from ...framework.core import RuntimeUnit
+from ...framework.io import (
     color_theme, font_theme, resolution_info,
     StringFileLikeObject,
 )
-from ..general.ui import (
+from ...framework.ui import (
     DynamicLabel, LabelButton, PageWithButtons
 )
 from pygame import Surface
@@ -18,7 +18,7 @@ import sys
 
 
 class Game(PageWithButtons):
-    def __init__(self, rtu: RuntimeUnit) -> NoReturn:
+    def __init__(self, rtu: RuntimeUnit) -> None:
         PageWithButtons.__init__(self, rtu)
         self.register_events(self.on_key_down, self.on_key_up)
 
@@ -65,7 +65,7 @@ class Game(PageWithButtons):
         self.current_word = self.words_to_be_answered.pop(0)
         print(f"[Game.__init__] current word: {self.current_word}")
 
-    def collect_words(self) -> NoReturn:
+    def collect_words(self) -> None:
         book = openpyxl.load_workbook(r"微型词库.xlsx")
         sheet = book.get_sheet_by_name("汉译英")
         how_many_rows = len(sheet["A"][1:])  # 第一个元素是表头
@@ -79,12 +79,12 @@ class Game(PageWithButtons):
 
             self.all_words.append(d)
 
-    def loop_once(self) -> NoReturn:
+    def loop_once(self) -> None:
         now = pygame.time.get_ticks()
         if (now - self._moment_when_cursor_changed_last_time) > 300:
             self.cursor_is_visible = not self.cursor_is_visible
 
-    def on_key_down(self, e: EventType) -> NoReturn:
+    def on_key_down(self, e: EventType) -> None:
         if e.type != KEYDOWN:
             return
         key = getattr(e, "key")
@@ -106,7 +106,7 @@ class Game(PageWithButtons):
             b.is_pressed = True
             self.update_a_local_control(b)
 
-    def on_key_up(self, e: EventType) -> NoReturn:
+    def on_key_up(self, e: EventType) -> None:
         if e.type != KEYUP:
             return
         key = getattr(e, "key")
@@ -122,7 +122,7 @@ class Game(PageWithButtons):
             self.current_focus = b
             self.update_a_local_control(b)
 
-    def select_some_words(self, times=5) -> NoReturn:
+    def select_some_words(self, times=5) -> None:
         for t in range(times):
             length = len(self.all_words)
             index = random.randint(0, length-1)
@@ -149,7 +149,7 @@ class Game(PageWithButtons):
     def words_to_be_answered(self) -> list: return self._words_to_be_answered
 
     @current_word.setter
-    def current_word(self, value: dict) -> NoReturn:
+    def current_word(self, value: dict) -> None:
         self._current_word = value
 
         self.rtu.clear_screen_without_flipping()
@@ -160,7 +160,7 @@ class Game(PageWithButtons):
         print(f"[Game.current_word.setter][END] current word: {value}")
 
     @cursor_is_visible.setter
-    def cursor_is_visible(self, value: bool) -> NoReturn:
+    def cursor_is_visible(self, value: bool) -> None:
         self._cursor_is_visible = value
 
         rect = self.cursor.get_rect()
@@ -180,7 +180,7 @@ class Game(PageWithButtons):
         self._moment_when_cursor_changed_last_time = pygame.time.get_ticks()
 
     @my_answer.setter
-    def my_answer(self, value: str) -> NoReturn:
+    def my_answer(self, value: str) -> None:
         self._my_answer = value
 
         self.rtu.clear_screen_without_flipping()
@@ -193,7 +193,7 @@ class Game(PageWithButtons):
 # 之所以重新定义类，是为了在这个脚本内部定制command方法
 # 当然，这样做的一个副作用是，可以在__init__方法中将button的参数设置好
 class Button1(LabelButton):
-    def __init__(self, **kwargs) -> NoReturn:
+    def __init__(self, **kwargs) -> None:
         LabelButton.__init__(
             self,
             content="再来5个", font=font_theme.ui, size=10,
@@ -201,7 +201,7 @@ class Button1(LabelButton):
         )
         self.is_disabled = True
 
-    def command(self, page: Game) -> NoReturn:
+    def command(self, page: Game) -> None:
         page.select_some_words()
 
         # 检查答案是否正确
@@ -222,14 +222,14 @@ class Button1(LabelButton):
 
 
 class Button3(LabelButton):
-    def __init__(self, **kwargs) -> NoReturn:
+    def __init__(self, **kwargs) -> None:
         LabelButton.__init__(
             self,
             content="提交", font=font_theme.ui, size=10,
             **kwargs,
         )
 
-    def command(self, page: Game) -> NoReturn:
+    def command(self, page: Game) -> None:
         if self.is_disabled:
             return
 
@@ -252,12 +252,12 @@ class Button3(LabelButton):
 
 
 class Button4(LabelButton):
-    def __init__(self, **kwargs) -> NoReturn:
+    def __init__(self, **kwargs) -> None:
         LabelButton.__init__(
             self,
             content="返回标题", font=font_theme.ui, size=10,
             **kwargs,
         )
 
-    def command(self, page: PageWithButtons) -> NoReturn:
+    def command(self, page: PageWithButtons) -> None:
         page.is_alive = False

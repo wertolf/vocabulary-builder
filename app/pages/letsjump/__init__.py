@@ -2,11 +2,11 @@
 跳棋游戏演示界面。
 """
 
-from ...general import RuntimeUnit
-from ...general.constants import (
+from ....framework.core import RuntimeUnit
+from ....framework.io import (
     font_theme
 )
-from ...general.ui import (
+from ....framework.ui import (
     LabelButton, PageWithButtons
 )
 from typing import NoReturn
@@ -22,7 +22,7 @@ from pygame import MOUSEBUTTONUP, MOUSEMOTION
 
 class Demo(PageWithButtons):
     board: presentation.Board
-    def __init__(self, rtu: RuntimeUnit) -> NoReturn:
+    def __init__(self, rtu: RuntimeUnit) -> None:
         PageWithButtons.__init__(self, rtu)
 
         core.start_game_2p()
