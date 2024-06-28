@@ -1,4 +1,4 @@
-## v0.2
+## v0.2 (not finished)
 
 * 将 app/__init__.py 中的内容移至 main.py
 * bug fix: NoReturn

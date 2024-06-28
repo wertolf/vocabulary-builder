@@ -152,54 +152,6 @@ class _RuntimeUnit:
 
     def present_full_screen_fade_out(self) -> None: self.present_fade_out(self.screen, time_delayed=0)
 
-    def present_fade_out(
-            self, surf: Surface,
-            destination=(0, 0), speed=20,
-            click_needed: bool = False,
-            click_optional: bool = False, count_down: int = 1000,
-            time_delayed: int = 300,
-    ) -> None:
-        """
-        实现内容从屏幕上“淡出”的效果。
-        :param surf: 如果赋值为self.screen，就是全屏淡出
-        Below are parameters which have a default value.
-        :param destination:
-        :param speed:
-        :param click_needed: 如果赋值为True，将一直等待，直到用户点击屏幕
-        :param click_optional: 在倒计时count_down结束之前，点击屏幕可以提前开始动画
-        :param count_down: 如果click_optional为True，倒计时结束之后自动开始动画
-        :param time_delayed: 在“淡出”动画开始前，内容在屏幕上停留的时间（单位：ms）
-        :return: None
-        """
-        assert (click_needed and click_optional) is not True, "click_needed and click_optional should not both be True."
-        if click_needed or click_optional:
-            self.start_waiting()
-            time_when_waiting_began = pygame.time.get_ticks()
-            while self.is_waiting:
-                if click_optional:
-                    time_at_the_moment = pygame.time.get_ticks()
-                    time_passed = time_at_the_moment - time_when_waiting_began
-                    if time_passed >= count_down:
-                        self.stop_waiting()
-                        break
-                self.handle_events(
-                    self.check_if_user_clicked_or_pressed,
-                    *self.list_of_universal_handlers,
-                )
-        pygame.time.delay(time_delayed)
-        surf = surf.copy()
-        for alpha in range(255, 0, -speed):
-            self.screen.fill(color_theme.background)
-            surf.set_alpha(alpha)
-            self.screen.blit(surf, destination)
-            self.flip()
-
-            self.handle_universal_events_during_each_animation_frame()
-            erd = _ExternalRuntimeData()
-            if erd.should_return_at_once:
-                erd.should_return_at_once = False  # 还原状态
-                return
-
     def sleep(self, count_down: int) -> None:
         # 这个方法是为了弥补pygame.time.delay运行期间无法响应退出事件的问题
         time_when_waiting_began = pygame.time.get_ticks()
@@ -219,7 +171,8 @@ class _RuntimeUnit:
         pygame.event.clear()  # 为了防止之前遗留的事件意外地结束waiting
         self.is_waiting = True
 
-    def stop_waiting(self) -> None: self.is_waiting = False
+    def stop_waiting(self) -> None:
+        self.is_waiting = False
 
     def update_a_local_area_of_screen(self, area: Rect) -> None:
         # cf. self.flip()

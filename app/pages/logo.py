@@ -1,5 +1,6 @@
 from framework.core import RuntimeUnit
 from framework.ui import StaticLabel, Page
+from framework.an import FadeOut
 
 from config import font_theme
 
@@ -14,9 +15,9 @@ class Logo(Page):
                 content="presented by", font=font_theme.logo, size=10,
                 centerx=self.x_mean, bottom=self.y_mean,
             ),
-            # construct "OurDreams" label
+            # construct "WERTech" label
             StaticLabel(
-                content="OurDreams", font=font_theme.logo, size=20,
+                content="WERTech", font=font_theme.logo, size=20,
                 centerx=self.x_mean, top=self.y_mean,
             ),
         )
@@ -25,4 +26,4 @@ class Logo(Page):
         self.draw_and_flip()
 
         # full-screen fade-out
-        self.rtu.present_fade_out(self.screen, click_optional=True, count_down=1500)
+        FadeOut(self.rtu, self.screen, click_optional=True, count_down=1000).play()

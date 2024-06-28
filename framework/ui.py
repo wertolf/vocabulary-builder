@@ -168,11 +168,6 @@ class _Control(Sprite, _AbstractControl):
         return position_info
 
 
-class _Container:
-    # 放置Control的容器
-    pass
-
-
 class _Page:
     def __init__(self, rtu: RuntimeUnit) -> None:
         self._dict_of_controls = {}

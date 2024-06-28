@@ -4,8 +4,6 @@ from config import color_theme, font_theme
 # from .game import Game
 from .settings import Settings
 # from .letsjump import Demo  # 跳棋游戏演示界面
-import pygame
-import sys
 
 
 class Home(PageWithButtons):
@@ -15,7 +13,7 @@ class Home(PageWithButtons):
         # construct controls and add them to corresponding groups
         self.register_controls(
             StaticLabel(
-                content="背单词软件", font=font_theme.ui, size=20,
+                content="PYGAME游戏开发框架演示", font=font_theme.ui, size=20,
                 top=self.y_min + self.length_unit * 20,
                 centerx=self.x_mean,
             )
@@ -26,9 +24,9 @@ class Home(PageWithButtons):
                 right=self.x_max - self.length_unit * 25,
             )
         )
-        b = Button2()
+        b = Button2()  # the buttons are defined at the bottom of the file
         b.top = self.y_mean + self.length_unit * 10
-        b.right = self.x_max - self.length_unit * 25
+        b.right = self.x_max - self.length_unit * 25  # 右对齐
         self.register_controls(b)
         b = Button3()
         b.top = self.y_mean + self.length_unit * 30
@@ -42,6 +40,9 @@ class Home(PageWithButtons):
 
 # 之所以重新定义类，是为了在这个脚本内部定制command方法
 # 当然，这样做的一个副作用是，可以在__init__方法中将button的参数设置好
+# 之所以把 Button 类的定义放在 Page 下面，
+# 是因为 Button 的 command 方法的 page 参数
+# 在 type hint 时可能需要将类型设置为 Home 而不是 PageWithButtons
 class Button1(LabelButton):
     def __init__(self, **kwargs) -> None:
         LabelButton.__init__(
