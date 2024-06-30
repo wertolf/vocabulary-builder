@@ -1,7 +1,7 @@
 from framework.an.animation import Animation
 from framework.core import RuntimeUnit
 
-from framework.globl import gs
+from framework.globe import gs
 
 from config import color_theme
 

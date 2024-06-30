@@ -1,8 +1,15 @@
 """
 Global State
 """
-
+from pygame import Surface
 import logging
+
+from framework.screen import ScreenManager
+
+import config.resolution
+
+# initialization
+scrmgr = ScreenManager(config.resolution.win_width, config.resolution.win_height)
 
 class GlobalState():
     def __init__(self):

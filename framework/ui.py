@@ -12,6 +12,8 @@ from pygame.sprite import Group, Sprite
 from typing import Dict, List, NoReturn, Optional, Tuple, Union
 import pygame
 
+from framework.globe import scrmgr
+
 
 class _Focusable:
     def __init__(self): self._is_focused = False
@@ -178,7 +180,7 @@ class _Page:
         self.register_events(*rtu.list_of_universal_handlers)
 
     def do_sth_after_each_loop(self) -> None:
-        self.handle_events()
+        self.rtu.handle_events(*self.event_handlers)
 
     def do_sth_before_each_loop(self) -> None:
         pass
@@ -188,18 +190,11 @@ class _Page:
         self.draw_and_flip()
 
     def draw(self) -> None:
-        self.group_of_all_sprites.draw(self.rtu.screen)
+        self.group_of_all_sprites.draw(scrmgr.screen)
 
     def draw_and_flip(self, **kwargs) -> None:
         self.draw()
-        self.flip()
-
-    def flip(self, **kwargs): self.rtu.flip(**kwargs)
-
-    def handle_events(self) -> None:
-        # 注意，不同于RuntimeUnit.handle_events，
-        # Page.handle_events不再是静态方法
-        self.rtu.handle_events(*self.event_handlers)
+        scrmgr.update_global()
 
     def loop_once(self) -> None:  # 循环体，可以在Page的子类中自定义
         pass
@@ -220,19 +215,27 @@ class _Page:
             self.do_sth_after_each_loop()
 
     def update_a_local_control(self, c: _Control) -> None:
-        c.blit_myself(self.screen)
-        self.rtu.update_a_local_area_of_screen(c.rect)
+        c.blit_myself(scrmgr.screen)
+        scrmgr.update_local_area(c.rect)
 
     def update_local_controls(self, *controls: _Control) -> None:
         for c in controls:
             self.update_a_local_control(c)
 
     @property
-    def dict_of_controls(self) -> Dict[str, _Control]: return self._dict_of_controls
+    def dict_of_controls(self) -> Dict[str, _Control]:
+        return self._dict_of_controls
+
     @property
-    def event_handlers(self) -> list: return self._event_handlers
+    def event_handlers(self) -> list:
+        return self._event_handlers
+
     @ property
-    def is_alive(self) -> bool: return self._is_alive
+    def is_alive(self) -> bool:
+        return self._is_alive
+    @ is_alive.setter
+    def is_alive(self, value: bool):
+        self._is_alive = value
 
     @ property
     def group_of_all_sprites(self) -> Group:
@@ -242,26 +245,7 @@ class _Page:
         return g
 
     @ property
-    def length_unit(self) -> float: return self.rtu.length_unit
-    @ property
     def rtu(self) -> RuntimeUnit: return self._rtu
-    @ property
-    def screen(self) -> Surface: return self.rtu.screen
-    @ property
-    def x_max(self) -> int: return self.rtu.x_max
-    @ property
-    def x_mean(self) -> int: return self.rtu.x_mean
-    @ property
-    def x_min(self) -> int: return self.rtu.x_min
-    @ property
-    def y_max(self) -> int: return self.rtu.y_max
-    @ property
-    def y_mean(self) -> int: return self.rtu.y_mean
-    @ property
-    def y_min(self) -> int: return self.rtu.y_min
-
-    @ is_alive.setter
-    def is_alive(self, value: bool) -> None: self._is_alive = value
 
 
 class _TemporaryPage(_Page):
@@ -615,6 +599,9 @@ class _PageWithButtons(_Page):
     def current_focus(self) -> _LabelButton:
         # 现在正focus的button，没有时为None，有时为Button实例
         return self._current_focus
+    @ current_focus.setter
+    def current_focus(self, value: _LabelButton) -> None:
+        self._current_focus = value
 
     @ property
     def group_of_all_buttons(self) -> Group:
@@ -632,9 +619,6 @@ class _PageWithButtons(_Page):
             if not b.is_disabled:
                 g.add(b)
         return g
-
-    @ current_focus.setter
-    def current_focus(self, value: _LabelButton) -> None: self._current_focus = value
 
 
 class _TemporaryPageWithButtons(_TemporaryPage, _PageWithButtons):

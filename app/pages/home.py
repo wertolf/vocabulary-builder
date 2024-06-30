@@ -5,6 +5,8 @@ from config import color_theme, font_theme
 from .settings import Settings
 # from .letsjump import Demo  # 跳棋游戏演示界面
 
+from framework.globe import scrmgr
+
 
 class Home(PageWithButtons):
     def __init__(self, rtu: RuntimeUnit) -> None:
@@ -14,27 +16,27 @@ class Home(PageWithButtons):
         self.register_controls(
             StaticLabel(
                 content="PYGAME游戏开发框架演示", font=font_theme.ui, size=20,
-                top=self.y_min + self.length_unit * 20,
-                centerx=self.x_mean,
+                top=scrmgr.y_min + scrmgr.length_unit * 20,
+                centerx=scrmgr.x_mean,
             )
         )
         self.register_controls(
             Button1(
-                top=self.y_mean - self.length_unit * 10,
-                right=self.x_max - self.length_unit * 25,
+                top=scrmgr.y_mean - scrmgr.length_unit * 10,
+                right=scrmgr.x_max - scrmgr.length_unit * 25,
             )
         )
         b = Button2()  # the buttons are defined at the bottom of the file
-        b.top = self.y_mean + self.length_unit * 10
-        b.right = self.x_max - self.length_unit * 25  # 右对齐
+        b.top = scrmgr.y_mean + scrmgr.length_unit * 10
+        b.right = scrmgr.x_max - scrmgr.length_unit * 25  # 右对齐
         self.register_controls(b)
         b = Button3()
-        b.top = self.y_mean + self.length_unit * 30
-        b.right = self.x_max - self.length_unit * 25
+        b.top = scrmgr.y_mean + scrmgr.length_unit * 30
+        b.right = scrmgr.x_max - scrmgr.length_unit * 25
         self.register_controls(b)
         b = Button4()
-        b.top = self.y_mean + self.length_unit * 50
-        b.right = self.x_max - self.length_unit * 25
+        b.top = scrmgr.y_mean + scrmgr.length_unit * 50
+        b.right = scrmgr.x_max - scrmgr.length_unit * 25
         self.register_controls(b)
 
 

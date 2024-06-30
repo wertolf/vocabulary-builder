@@ -32,6 +32,9 @@ python -m pdb main.py
 * 这部作品的编写很大程度上受到了 [`pyglet`](https://github.com/pyglet/pyglet) 的影响，包括
   * 极简的 `main.py` 入口脚本
   * 装饰器的泛滥
+    * property
+    * setter
+    * staticmethod
 * 虽然不一定有效/有意义，但确实能够看到一些高级技巧/技术的使用痕迹，除了前面提到的装饰器之外，还有
   * 将字体文件以字节流的形式读入内存，再传给 `pygame.font.Font` 类的[构造函数](https://www.pygame.org/docs/ref/font.html#pygame.font.Font)
     * 参见 `app/general/constants/__init__.py` 文件中的 [`FontStream`](./app/general/constants/__init__.py#L171) 类

@@ -10,7 +10,42 @@
 
 如果没记错，最初引入 rtu 是因为 DCL 里面 display 被放在一个模块中，同时模块里面包含了初始化 display 的代码，这样就导致无法动态地改变 display
 
+证据就在 RuntimeUnit 的构造函数里
+```py
+# 这个变量只能通过在整个程序的不同函数中不断传入rtu来保持，不能存储在外部，
+# 所以rtu这个类的存在是必要的
+self.screen = pygame.display.set_mode(self.resolution)
+```
+
 rtu 的特点是在 top-level 的脚本中创建，然后作为参数传入所有 ui 相关类的构造函数，这样就能够通过 rtu 获取到一切想要的全局状态
+
+然而这实际上是因为我误解了 Python 模块的全局变量的性质
+
+而这个决定对整个项目的 monolithic nature 具有决定性的影响
+
+如果只读就
+```py
+from xxx import screen
+```
+
+如果要修改就
+```py
+import xxx
+xxx.screen = yyy
+```
+
+而之所以这么想修改 screen 如果没记错的话当时主要是想实现 toggle fullscreen 的功能
+
+## ui.Page
+
+核心逻辑
+```
+do sth before main loop start
+while is_alive:
+    do sth before each loop
+    loop body
+    do sth after each loop
+```
 
 ## 关键问题
 

@@ -1,3 +1,13 @@
+## v0.3
+
+* 剔除冗余
+  * ui.Page
+    * handle_events
+    * length_unit, x_max, x_mean, x_min, y_max, y_mean, y_min
+    * screen
+* 将 resolution 相关计算以及 screen 从 RuntimeUnit 中解耦，放入 ScreenManager 类中
+  * 详见 ScreenManager 的 class diagram
+
 ## v0.2
 
 最终状态

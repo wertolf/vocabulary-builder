@@ -1,7 +1,8 @@
 from config import color_theme
 from framework.an.animation import Animation
 from framework.core import RuntimeUnit
-from framework.globl import gs
+
+from framework.globe import gs, scrmgr
 
 
 import pygame.time
@@ -59,10 +60,10 @@ class FadeOut(Animation):
         pygame.time.delay(self.time_delayed)
         surf = self.surf.copy()
         for alpha in range(255, 0, -self.speed):
-            self.rtu.screen.fill(color_theme.background)
+            scrmgr.screen.fill(color_theme.background)
             surf.set_alpha(alpha)
-            self.rtu.screen.blit(surf, self.destination)
-            self.rtu.flip()
+            scrmgr.screen.blit(surf, self.destination)
+            scrmgr.update_global()
 
             self.rtu.handle_universal_events_during_each_animation_frame()
             if gs.should_return_at_once:
