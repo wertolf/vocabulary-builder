@@ -1,4 +1,10 @@
-# 设计文档
+# 设计文档 v0.1
+
+## ui
+
+之所以定义了一个 UniformTextPresenter 类，是因为 StaticLabel 和 TextBlock 都继承了它
+
+之所以在 UniformTextPresenter 和 StaticLabel 的构造函数的末尾触发父类的构造函数，是因为 Control 的构造函数中需要初始化 _surf 和 _rect 属性，而这只有在要绘制的内容确定之后才能确定
 
 ## 关键问题
 
