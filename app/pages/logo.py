@@ -1,6 +1,6 @@
 from framework.core import RuntimeUnit
 from framework.ui import StaticLabel, Page
-from framework.an import FadeOut
+from framework.an.fade_out import FadeOut
 
 from config import font_theme
 

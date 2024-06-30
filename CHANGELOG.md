@@ -1,5 +1,11 @@
-## v0.2 (not finished)
+## v0.2
 
+最终状态
+* 可以显示 Logo
+* 可以进入 Home
+* 可以从 Home 按“退出”键退出
+
+具体修改
 * 将 app/__init__.py 中的内容移至 main.py
 * bug fix: NoReturn
   * NoReturn 表示这个函数不应该有返回值，所以 Pylance 看到这样的声明之后会将之后的代码标记为 unreachable
@@ -18,6 +24,10 @@
   * 将字体文件打包成 zip 然后再调用 Python 的 zipfile 进行读取
 * 用 PPT 绘制模块之间的关系图以及部分类之间的继承关系
 * 学习使用 UML 类图
+* 去除没有必要的 runtime_data.pkl 的读写逻辑
+  * 由于暂时回想不起来 ExternalRuntimeData 这个类的必要性，因此暂时予以保留，但是改名为 GlobalState
+  * 相应地去除 RuntimeUnit 的 is_waiting 属性
+* 将动画功能从 RuntimeUnit 中解耦出来
 
 ## v0.1
 

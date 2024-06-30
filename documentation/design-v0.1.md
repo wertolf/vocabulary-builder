@@ -6,6 +6,12 @@
 
 之所以在 UniformTextPresenter 和 StaticLabel 的构造函数的末尾触发父类的构造函数，是因为 Control 的构造函数中需要初始化 _surf 和 _rect 属性，而这只有在要绘制的内容确定之后才能确定
 
+## RuntimeUnit
+
+如果没记错，最初引入 rtu 是因为 DCL 里面 display 被放在一个模块中，同时模块里面包含了初始化 display 的代码，这样就导致无法动态地改变 display
+
+rtu 的特点是在 top-level 的脚本中创建，然后作为参数传入所有 ui 相关类的构造函数，这样就能够通过 rtu 获取到一切想要的全局状态
+
 ## 关键问题
 
 ### type hint

@@ -1,23 +1,14 @@
-"""
-Animations.
-"""
+from config import color_theme
+from framework.an.animation import Animation
+from framework.core import RuntimeUnit
+from framework.globl import gs
+
+
 import pygame.time
 from pygame import Surface
 
-from framework.core import RuntimeUnit
-from config import color_theme
 
-class _Animation:
-    def __init__(self, rtu: RuntimeUnit):
-        self.rtu = rtu  # hold a reference for the global runtime unit
-
-    def play():
-        """
-        Play the animation.
-        """
-        pass
-
-class _FadeOut(_Animation):
+class FadeOut(Animation):
     """
     实现内容从屏幕上“淡出”的效果。
     """
@@ -39,7 +30,7 @@ class _FadeOut(_Animation):
         :param time_delayed: 在“淡出”动画开始前，内容在屏幕上停留的时间（单位：ms）
         :return: None
         """
-        _Animation.__init__(self, rtu)
+        Animation.__init__(self, rtu)
 
         assert (click_needed and click_optional) is not True, "click_needed and click_optional should not both be True."
         self.click_needed = click_needed
@@ -54,7 +45,7 @@ class _FadeOut(_Animation):
         if self.click_needed or self.click_optional:
             self.rtu.start_waiting()
             time_when_waiting_began = pygame.time.get_ticks()
-            while self.rtu.is_waiting:
+            while gs.is_waiting:
                 if self.click_optional:
                     time_at_the_moment = pygame.time.get_ticks()
                     time_passed = time_at_the_moment - time_when_waiting_began
@@ -73,14 +64,7 @@ class _FadeOut(_Animation):
             self.rtu.screen.blit(surf, self.destination)
             self.rtu.flip()
 
-            """
-            self.handle_universal_events_during_each_animation_frame()
-            erd = _ExternalRuntimeData()
-            if erd.should_return_at_once:
-                erd.should_return_at_once = False  # 还原状态
+            self.rtu.handle_universal_events_during_each_animation_frame()
+            if gs.should_return_at_once:
+                gs.should_return_at_once = False  # 还原状态
                 return
-            """
-
-
-class Animation(_Animation): pass
-class FadeOut(_FadeOut): pass
