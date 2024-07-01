@@ -2,7 +2,7 @@
 You can customize fonts used in the app here.
 """
 
-from framework.io import FontStream
+from lega.io import FontStream
 
 fonts = {
     "Segoe Print": FontStream("assets/fonts/SegoePrint.ttf"),

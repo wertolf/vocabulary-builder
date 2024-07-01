@@ -2,7 +2,7 @@
 You can custom colors used in the app here.
 """
 
-from framework.colors import *
+from lega.colors import *
 
 background = BLACK
 blurring = Color(0, 0, 0, 160)  # 用于 TemporaryPage

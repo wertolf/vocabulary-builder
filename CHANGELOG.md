@@ -1,3 +1,27 @@
+## v0.4
+
+* 将 framework 改名为 lega
+* 善用 Find in File 功能剔除冗余
+  * ScreenManager
+    * cam_width, cam_height, temp_win_width, temp_win_height
+  * RuntimeUnit
+    * blits_on_the_screen_and_flip_it
+* 引入 Vector2D
+* 把 x_mean 改成 center.x
+* 定义 on_key_up
+* 将 check_if_user_pressed_f5 放进 on_key_up
+* 将 end_program 从 RuntimeUnit 移到 globe
+* 将 GlobalState 整合进 Animation
+* 将 start_waiting 和 stop_waiting 移入 Animation
+* 将事件处理相关方法从 RuntimeUnit 中解耦，形成单独的 event_manager 模块
+* 使用 handle_events 进行动画过程中的事件处理，而不额外定义专门的 handle_events_during_animation 函数
+
+### 关于 lega 的命名
+
+取自 legacy 的前四个字母，表示这个框架诞生于对一个老旧项目的维护
+
+同时与“雷迦”谐音，带有一定的中二色彩
+
 ## v0.3
 
 * 剔除冗余

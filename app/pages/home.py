@@ -1,41 +1,41 @@
-from framework.core import RuntimeUnit
-from framework.ui import StaticLabel, LabelButton, PageWithButtons
+from lega.core import RuntimeUnit
+from lega.ui import StaticLabel, LabelButton, PageWithButtons
 from config import color_theme, font_theme
 # from .game import Game
 from .settings import Settings
 # from .letsjump import Demo  # 跳棋游戏演示界面
 
-from framework.globe import scrmgr
+from lega.globe import scrmgr, end_program
 
 
 class Home(PageWithButtons):
-    def __init__(self, rtu: RuntimeUnit) -> None:
-        PageWithButtons.__init__(self, rtu)
+    def __init__(self):
+        PageWithButtons.__init__(self)
 
         # construct controls and add them to corresponding groups
         self.register_controls(
             StaticLabel(
                 content="PYGAME游戏开发框架演示", font=font_theme.ui, size=20,
                 top=scrmgr.y_min + scrmgr.length_unit * 20,
-                centerx=scrmgr.x_mean,
+                centerx=scrmgr.center.x,
             )
         )
         self.register_controls(
             Button1(
-                top=scrmgr.y_mean - scrmgr.length_unit * 10,
+                top=scrmgr.center.y - scrmgr.length_unit * 10,
                 right=scrmgr.x_max - scrmgr.length_unit * 25,
             )
         )
         b = Button2()  # the buttons are defined at the bottom of the file
-        b.top = scrmgr.y_mean + scrmgr.length_unit * 10
+        b.top = scrmgr.center.y + scrmgr.length_unit * 10
         b.right = scrmgr.x_max - scrmgr.length_unit * 25  # 右对齐
         self.register_controls(b)
         b = Button3()
-        b.top = scrmgr.y_mean + scrmgr.length_unit * 30
+        b.top = scrmgr.center.y + scrmgr.length_unit * 30
         b.right = scrmgr.x_max - scrmgr.length_unit * 25
         self.register_controls(b)
         b = Button4()
-        b.top = scrmgr.y_mean + scrmgr.length_unit * 50
+        b.top = scrmgr.center.y + scrmgr.length_unit * 50
         b.right = scrmgr.x_max - scrmgr.length_unit * 25
         self.register_controls(b)
 
@@ -105,4 +105,4 @@ class Button4(LabelButton):
         )
 
     def command(self, page: PageWithButtons) -> None:
-        page.rtu.end_program()
+        end_program()

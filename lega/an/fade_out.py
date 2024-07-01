@@ -1,12 +1,12 @@
 from config import color_theme
-from framework.an.animation import Animation
-from framework.core import RuntimeUnit
+from lega.an.animation import Animation
 
-from framework.globe import gs, scrmgr
-
+from lega.globe import scrmgr
 
 import pygame.time
 from pygame import Surface
+
+from lega.event_manager import handle_events
 
 
 class FadeOut(Animation):
@@ -14,7 +14,7 @@ class FadeOut(Animation):
     实现内容从屏幕上“淡出”的效果。
     """
     def __init__(
-            self, rtu: RuntimeUnit, surf: Surface,
+            self, surf: Surface,
             destination=(0, 0), speed=20,
             click_needed: bool = False,
             click_optional: bool = False, count_down: int = 1000,
@@ -31,7 +31,7 @@ class FadeOut(Animation):
         :param time_delayed: 在“淡出”动画开始前，内容在屏幕上停留的时间（单位：ms）
         :return: None
         """
-        Animation.__init__(self, rtu)
+        Animation.__init__(self)
 
         assert (click_needed and click_optional) is not True, "click_needed and click_optional should not both be True."
         self.click_needed = click_needed
@@ -44,19 +44,16 @@ class FadeOut(Animation):
 
     def play(self):
         if self.click_needed or self.click_optional:
-            self.rtu.start_waiting()
+            self.start_waiting()
             time_when_waiting_began = pygame.time.get_ticks()
-            while gs.is_waiting:
+            while self.is_waiting:
                 if self.click_optional:
                     time_at_the_moment = pygame.time.get_ticks()
                     time_passed = time_at_the_moment - time_when_waiting_began
                     if time_passed >= self.count_down:
-                        self.rtu.stop_waiting()
+                        self.stop_waiting()
                         break
-                self.rtu.handle_events(
-                    self.rtu.check_if_user_clicked_or_pressed,
-                    *self.rtu.list_of_universal_handlers,
-                )
+                handle_events(*self._handlers)
         pygame.time.delay(self.time_delayed)
         surf = self.surf.copy()
         for alpha in range(255, 0, -self.speed):
@@ -65,7 +62,7 @@ class FadeOut(Animation):
             scrmgr.screen.blit(surf, self.destination)
             scrmgr.update_global()
 
-            self.rtu.handle_universal_events_during_each_animation_frame()
-            if gs.should_return_at_once:
-                gs.should_return_at_once = False  # 还原状态
+            handle_events(*self._handlers)
+            if self.should_return_at_once:
+                self.should_return_at_once = False  # 还原状态
                 return

@@ -1,9 +1,7 @@
 # 脚本最后会按照字母顺序排列脚本中定义的所有类，方便查阅
 # 根据我的记忆，之所以把这么多 Class 放进同一个文件中，可能是因为使用 Type Hint 时可能出现循环引用的问题
-from framework.core import RuntimeUnit
-# from . import ExternalRuntimeData
 from config import color_theme
-from framework.io import FontStream
+from lega.io import FontStream
 
 from pygame import Color, Rect, Surface
 from pygame.event import EventType
@@ -12,8 +10,11 @@ from pygame.sprite import Group, Sprite
 from typing import Dict, List, NoReturn, Optional, Tuple, Union
 import pygame
 
-from framework.globe import scrmgr
+from lega.globe import scrmgr
 
+from lega.event_manager import common_handlers, handle_events
+
+from lega.core import RuntimeUnit  # for transition purpose
 
 class _Focusable:
     def __init__(self): self._is_focused = False
@@ -171,22 +172,21 @@ class _Control(Sprite, _AbstractControl):
 
 
 class _Page:
-    def __init__(self, rtu: RuntimeUnit) -> None:
+    def __init__(self) -> None:
         self._dict_of_controls = {}
         self._event_handlers = []
         self._is_alive = True  # 值变为False时，这个页面的生命周期结束
-        self._rtu = rtu
 
-        self.register_events(*rtu.list_of_universal_handlers)
+        self.register_events(*common_handlers)
 
     def do_sth_after_each_loop(self) -> None:
-        self.rtu.handle_events(*self.event_handlers)
+        handle_events(*self.event_handlers)
 
     def do_sth_before_each_loop(self) -> None:
         pass
 
     def do_sth_before_main_loop_start(self) -> None:
-        self.rtu.clear_screen_without_flipping()  # clear screen
+        scrmgr.clear_screen_without_update()
         self.draw_and_flip()
 
     def draw(self) -> None:
@@ -243,9 +243,6 @@ class _Page:
         for c in self.dict_of_controls.values():
             g.add(c)
         return g
-
-    @ property
-    def rtu(self) -> RuntimeUnit: return self._rtu
 
 
 class _TemporaryPage(_Page):
@@ -536,8 +533,8 @@ class _LabelButton(_DynamicLabel, _Button):
 
 
 class _PageWithButtons(_Page):
-    def __init__(self, rtu: RuntimeUnit) -> None:
-        _Page.__init__(self, rtu)
+    def __init__(self):
+        _Page.__init__(self)
         self.register_events(
             self.on_mouse_button_down,
             self.on_mouse_button_up,

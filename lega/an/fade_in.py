@@ -1,7 +1,7 @@
-from framework.an.animation import Animation
-from framework.core import RuntimeUnit
+from lega.an.animation import Animation
+from lega.core import RuntimeUnit
 
-from framework.globe import gs
+from lega.globe import sttmgr
 
 from config import color_theme
 
@@ -42,6 +42,6 @@ class FadeIn(Animation):
 
             self.rtu.handle_universal_events_during_each_animation_frame()
 
-            if gs.should_return_at_once:
-                gs.should_return_at_once = False  # 还原状态
+            if sttmgr.should_return_at_once:
+                sttmgr.should_return_at_once = False  # 还原状态
                 return

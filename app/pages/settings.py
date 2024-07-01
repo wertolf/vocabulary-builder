@@ -1,6 +1,6 @@
-from framework.core import RuntimeUnit
+from lega.core import RuntimeUnit
 from config import color_theme, font_theme
-from framework.ui import (
+from lega.ui import (
     StaticLabel, LabelButton, Page, TemporaryPageWithButtons,
 )
 

@@ -2,11 +2,11 @@
 跳棋游戏演示界面。
 """
 
-from ....framework.core import RuntimeUnit
-from ....framework.io import (
+from ....lega.core import RuntimeUnit
+from ....lega.io import (
     font_theme
 )
-from ....framework.ui import (
+from ....lega.ui import (
     LabelButton, PageWithButtons
 )
 from typing import NoReturn

@@ -6,6 +6,8 @@ from pygame.locals import FULLSCREEN
 
 from config import color_theme
 
+from lega.vector import Vector2D
+
 class ScreenManager:
     def __init__(self, width, height):
         self._win_width = width
@@ -16,10 +18,19 @@ class ScreenManager:
         self.clock = pygame.time.Clock()
         self.fps = 30
     
-    def update_global(self, delay: int = 0) -> None:
+    def clear_screen_without_update(self) -> None:
+        self.screen.fill(color_theme.background)
+
+    def clear_screen_with_update(self) -> None:
+        """
+        idiom
+        """
+        self.clear_screen_without_update()
+        self.update_global()
+
+    def update_global(self) -> None:
         # cf. self.update_local_area()
         pygame.display.flip()
-        pygame.time.delay(delay)
         self.clock.tick(self.fps)
 
     def update_local_area(self, area: Rect) -> None:
@@ -41,16 +52,8 @@ class ScreenManager:
         self.update_global()
 
     @property
-    def cam_width(self) -> int:
-        return self.win_width * 1  # 在这里设定有效显示区域的长
-
-    @property
-    def cam_height(self) -> int:
-        return self.win_height * 1  # 在这里设定有效显示区域的宽
-
-    @property
-    def center(self) -> Tuple[int, int]:
-        return self.x_mean, self.y_mean
+    def center(self) -> Vector2D:
+        return Vector2D(self.win_width // 2, self.win_height // 2)
 
     @property
     def length_unit(self) -> int:  # 必须是int，否则在创建Font实例时会报错
@@ -59,14 +62,6 @@ class ScreenManager:
     @property
     def resolution(self) -> Tuple[int, int]:
         return self.win_width, self.win_height
-
-    @property
-    def temp_win_height(self) -> int:
-        return int(self.win_height * 0.75)
-
-    @property
-    def temp_win_width(self) -> int:
-        return int(self.win_width * 0.75)
 
     @property
     def win_height(self) -> int:
@@ -78,24 +73,16 @@ class ScreenManager:
 
     @property
     def x_max(self) -> int:
-        return self.x_mean + int(self.cam_width * 0.5)
-
-    @property
-    def x_mean(self) -> int:
-        return int(self.win_width * 0.5)
+        return self.win_width
 
     @property
     def x_min(self) -> int:
-        return self.x_mean - int(self.cam_width * 0.5)
+        return 0
 
     @property
     def y_max(self) -> int:
-        return self.y_mean + int(self.cam_height * 0.5)
-
-    @property
-    def y_mean(self) -> int:
-        return int(self.win_height * 0.5)
+        return self.win_height
 
     @property
     def y_min(self) -> int:
-        return self.y_mean - int(self.cam_height * 0.5)
+        return 0

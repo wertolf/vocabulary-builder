@@ -34,7 +34,7 @@ python -m pdb main.py
   * 装饰器的泛滥
     * property
     * setter
-    * staticmethod
+    * 明明可以用函数却滥用 staticmethod
 * 虽然不一定有效/有意义，但确实能够看到一些高级技巧/技术的使用痕迹，除了前面提到的装饰器之外，还有
   * 将字体文件以字节流的形式读入内存，再传给 `pygame.font.Font` 类的[构造函数](https://www.pygame.org/docs/ref/font.html#pygame.font.Font)
     * 参见 `app/general/constants/__init__.py` 文件中的 [`FontStream`](./app/general/constants/__init__.py#L171) 类
@@ -51,3 +51,5 @@ python -m pdb main.py
 
 
 归根结底，与图形化界面设计相关的很多东西没有学到家就试图自己编写一个框架，所以会出现很多问题
+
+rtu 是一个失败的 monolithic 的典型
