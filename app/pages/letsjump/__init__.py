@@ -57,7 +57,7 @@ class Demo(PageWithButtons):
         pos = getattr(e, "pos")
         self.board.held_piece = pos
 
-        self.update_local_controls(self.board)
+        self.update_page_component(self.board)
 
         return super().on_mouse_motion(e)
     def pick(self, v: Vector2D):
@@ -77,7 +77,7 @@ class Demo(PageWithButtons):
         self.board.someone_is_holding_a_piece = True
         self.board.snapshot = None
         # 这一步还需要配合Board类在surf的getter里面调用self._update_surf方法
-        self.update_local_controls(self.board)
+        self.update_page_component(self.board)
     def cancel(self):
         """
         剧本触发条件：玩家已经拿起棋子，此时点击鼠标右键
@@ -93,7 +93,7 @@ class Demo(PageWithButtons):
         # 更新表示层状态
         self.board.someone_is_holding_a_piece = False
 
-        self.update_local_controls(self.board)
+        self.update_page_component(self.board)
     def confirm(self, v: Vector2D):
         """
         剧本触发条件：玩家已经拿起棋子，此时点击鼠标左键
@@ -120,4 +120,4 @@ class Demo(PageWithButtons):
         core.next_turn()
 
         # 更新表示层状态
-        self.update_local_controls(self.board)
+        self.update_page_component(self.board)

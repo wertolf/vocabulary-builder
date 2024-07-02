@@ -218,7 +218,7 @@ class Button1(LabelButton):
         b = page.dict_of_controls["submit"]
         assert isinstance(b, Button3)
         b.is_disabled = False
-        page.update_local_controls(self, b)
+        page.update_page_component(self, b)
 
 
 class Button3(LabelButton):
@@ -248,7 +248,7 @@ class Button3(LabelButton):
             b = page.dict_of_controls["more"]
             assert isinstance(b, Button1)
             b.is_disabled = False
-            page.update_local_controls(self, b)
+            page.update_page_component(self, b)
 
 
 class Button4(LabelButton):

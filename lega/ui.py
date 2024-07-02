@@ -6,8 +6,7 @@ from lega.io import FontStream
 from pygame import Color, Rect, Surface
 from pygame.event import EventType
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
-from pygame.sprite import Group, Sprite
-from typing import Dict, List, NoReturn, Optional, Tuple, Union
+from typing import Dict, List, NoReturn, Optional, Tuple, Union, Callable
 import pygame
 
 from lega.globe import scrmgr
@@ -15,6 +14,9 @@ from lega.globe import scrmgr
 from lega.event_manager import common_handlers, handle_events
 
 from lega.core import RuntimeUnit  # for transition purpose
+
+from lega.an.fade_out import FadeOut
+from lega.an.fade_in import FadeIn
 
 class _Focusable:
     def __init__(self): self._is_focused = False
@@ -42,9 +44,9 @@ class _AbstractControl:
     pass
 
 
-class _Control(Sprite, _AbstractControl):
+class _Control(_AbstractControl):
     def __init__(
-            self, *groups,
+            self,
             bottom: float = None, centerx: float = None, centery: float = None,
             left: float = None,
             name: str = None,
@@ -53,7 +55,6 @@ class _Control(Sprite, _AbstractControl):
     ) -> None:
         """
 
-        :param groups:
         :param bottom:
         :param centerx:
         :param centery:
@@ -63,7 +64,6 @@ class _Control(Sprite, _AbstractControl):
         :param top:
         :param kwargs: 目前这个kwargs主要是为了容错（子类可能传入多余的参数）
         """
-        Sprite.__init__(self, *groups)
 
         if name is None:
             self._name = pygame.time.get_ticks()  # 使用当前时间作为实例的name，这样就不会出现重复的情况
@@ -77,15 +77,17 @@ class _Control(Sprite, _AbstractControl):
     def _get_rect(self) -> Rect:
         return self._surf.get_rect(**self.position_info)
 
-    def _get_surf(self) -> Surface: pass
+    def _get_surf(self) -> Surface:
+        """
+        Override this method in subclass.
+        """
+        raise NotImplementedError("this method should be overridden by subclass")
+
     def _update_rect(self) -> None: self._rect = self._get_rect()
 
     def _update_surf(self) -> None:
         self._surf = self._get_surf()
         self._update_rect()
-
-    def blit_myself(self, target_surf: Surface) -> None:
-        target_surf.blit(self.image, self.rect)
 
     # 存储位置信息的(1+6)个属性
     @property
@@ -135,12 +137,6 @@ class _Control(Sprite, _AbstractControl):
 
     # 其他属性
     @property
-    def image(self) -> Surface:
-        # 这个属性是只读的
-        # 仅用于这个Sprite(Control的父类)所属的Group的draw()方法
-        return self.surf
-
-    @property
     def name(self) -> str: return self._name
     @property
     def rect(self) -> Rect: return self._rect
@@ -173,31 +169,47 @@ class _Control(Sprite, _AbstractControl):
 
 class _Page:
     def __init__(self) -> None:
-        self._dict_of_controls = {}
-        self._event_handlers = []
         self._is_alive = True  # 值变为False时，这个页面的生命周期结束
+
+        self.dict_of_controls: Dict[str, _Control] = {}
+        self.event_handlers: List[Callable] = []
 
         self.register_events(*common_handlers)
 
-    def do_sth_after_each_loop(self) -> None:
-        handle_events(*self.event_handlers)
+    def run(self) -> None:
+        self.do_sth_before_main_loop_starts()
+        while self.is_alive:
+            self.do_sth_before_each_loop()
+            self.loop_once()
+            self.do_sth_after_each_loop()
+        self.do_sth_after_main_loop_ends()
+
+    def do_sth_before_main_loop_starts(self) -> None:
+        scrmgr.clear_screen_without_update()
+
+        for c in self.dict_of_controls.values():
+            scrmgr.screen.blit(c.surf, c.rect)
+        
+        """
+        # 测试一下全局淡入，但实际上如果每个页面都淡入的话效果未必很好
+        FadeIn(scrmgr.screen).play()
+        """
+
+        scrmgr.update_global()
 
     def do_sth_before_each_loop(self) -> None:
         pass
 
-    def do_sth_before_main_loop_start(self) -> None:
-        scrmgr.clear_screen_without_update()
-        self.draw_and_flip()
-
-    def draw(self) -> None:
-        self.group_of_all_sprites.draw(scrmgr.screen)
-
-    def draw_and_flip(self, **kwargs) -> None:
-        self.draw()
-        scrmgr.update_global()
-
-    def loop_once(self) -> None:  # 循环体，可以在Page的子类中自定义
+    def loop_once(self) -> None:
+        # 循环体，可以在Page的子类中重写此方法
         pass
+
+    def do_sth_after_each_loop(self) -> None:
+        handle_events(*self.event_handlers)
+
+    def do_sth_after_main_loop_ends(self) -> None:
+        # full-screen fade-out
+        FadeOut(scrmgr.screen, click_optional=True, count_down=1000).play()
 
     def register_controls(self, *controls: _Control) -> None:
         for c in controls:
@@ -207,28 +219,10 @@ class _Page:
         for event_handler in event_handlers:
             self.event_handlers.append(event_handler)
 
-    def run(self) -> None:
-        self.do_sth_before_main_loop_start()
-        while self.is_alive:
-            self.do_sth_before_each_loop()
-            self.loop_once()
-            self.do_sth_after_each_loop()
-
-    def update_a_local_control(self, c: _Control) -> None:
-        c.blit_myself(scrmgr.screen)
-        scrmgr.update_local_area(c.rect)
-
-    def update_local_controls(self, *controls: _Control) -> None:
+    def update_page_component(self, *controls: _Control) -> None:
         for c in controls:
-            self.update_a_local_control(c)
-
-    @property
-    def dict_of_controls(self) -> Dict[str, _Control]:
-        return self._dict_of_controls
-
-    @property
-    def event_handlers(self) -> list:
-        return self._event_handlers
+            scrmgr.screen.blit(c.surf, c.rect)
+            scrmgr.update_local_area(c.rect)
 
     @ property
     def is_alive(self) -> bool:
@@ -236,13 +230,6 @@ class _Page:
     @ is_alive.setter
     def is_alive(self, value: bool):
         self._is_alive = value
-
-    @ property
-    def group_of_all_sprites(self) -> Group:
-        g = Group()
-        for c in self.dict_of_controls.values():
-            g.add(c)
-        return g
 
 
 class _TemporaryPage(_Page):
@@ -268,7 +255,7 @@ class _TemporaryPage(_Page):
             centery = rtu.resolution_info.y_mean
         self._window_rect = self._window_surf.get_rect(centerx=centerx, centery=centery)
 
-    def do_sth_before_main_loop_start(self) -> None:
+    def do_sth_before_main_loop_starts(self) -> None:
         # cf. Page.doing_sth_before_main_loop_start
         # 不需要clear screen
         self.screen.blit(self.background_surf, (0, 0))
@@ -307,7 +294,6 @@ class _UniformTextPresenter(_Control):
             self, font: FontStream, size: int,
             anti_alias: bool = False,
             color: Color = color_theme.foreground,
-            groups: Union[List[Group], Tuple[Group]] = (),
             **kwargs,
     ) -> None:
         """
@@ -317,7 +303,6 @@ class _UniformTextPresenter(_Control):
         Below are parameters with default values:
         :param anti_alias:
         :param color:
-        :param groups:
 
         :param kwargs: see _Control.__init__
         """
@@ -325,7 +310,7 @@ class _UniformTextPresenter(_Control):
         self._color = color
         self._font = font
         self._size = size
-        _Control.__init__(self, *groups, **kwargs)  # 和通常情况不同，把父类的构造函数放在后边
+        _Control.__init__(self, **kwargs)  # 和通常情况不同，把父类的构造函数放在后边
 
     @property
     def anti_alias(self) -> bool: return self._anti_alias
@@ -557,7 +542,7 @@ class _PageWithButtons(_Page):
         if button != 1:
             return
         self.current_focus.is_pressed = True  # 更新状态
-        self.update_a_local_control(self.current_focus)
+        self.update_page_component(self.current_focus)
 
     def on_mouse_button_up(self, e: EventType) -> None:
         if e.type != MOUSEBUTTONUP:
@@ -568,7 +553,7 @@ class _PageWithButtons(_Page):
         if button != 1:
             return
         self.current_focus.is_pressed = False  # 更新状态
-        self.update_a_local_control(self.current_focus)
+        self.update_page_component(self.current_focus)
         self.current_focus.command(self)  # 既然完成了按下和抬起的全过程，就要执行command了
 
     def on_mouse_motion(self, e: EventType) -> None:
@@ -579,17 +564,17 @@ class _PageWithButtons(_Page):
         # 因为显然它很常用，不可能只出现在Home这一页（Page）中
         if self.current_focus is None:
             # 如果此时没有焦点，就检查鼠标是否移动到了某个potential focus上
-            for b in self.group_of_enabled_buttons:
+            for b in self.list_of_enabled_buttons:
                 assert isinstance(b, _LabelButton)
                 if b.rect.collidepoint(pos):
                     b.is_focused = True
-                    self.update_a_local_control(b)
+                    self.update_page_component(b)
                     self.current_focus = b  # 更新状态
         else:
             # 如果此时有焦点，就检查鼠标移动是否导致鼠标离开了焦点
             if not self.current_focus.rect.collidepoint(pos):
                 self.current_focus.is_focused = False  # 更新按钮的状态
-                self.update_a_local_control(self.current_focus)
+                self.update_page_component(self.current_focus)
                 self.current_focus = None  # 更新页面的状态
 
     @ property
@@ -601,21 +586,12 @@ class _PageWithButtons(_Page):
         self._current_focus = value
 
     @ property
-    def group_of_all_buttons(self) -> Group:
-        g = Group()
-        for b in self.dict_of_controls.values():
-            if isinstance(b, _LabelButton):
-                g.add(b)
-        return g
+    def list_of_all_buttons(self) -> List[_LabelButton]:
+        return [b for b in self.dict_of_controls.values() if isinstance(b, _LabelButton)]
 
     @ property
-    def group_of_enabled_buttons(self) -> Group:
-        g = Group()
-        for b in self.group_of_all_buttons:
-            assert isinstance(b, _LabelButton)
-            if not b.is_disabled:
-                g.add(b)
-        return g
+    def list_of_enabled_buttons(self) -> List[_LabelButton]:
+        return [b for b in self.dict_of_controls.values() if isinstance(b, _LabelButton) and not b.is_disabled]
 
 
 class _TemporaryPageWithButtons(_TemporaryPage, _PageWithButtons):

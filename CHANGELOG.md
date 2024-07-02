@@ -1,3 +1,17 @@
+## v0.5 (not finished)
+
+* 取消 Control 对 Sprite 的继承
+* 使用 list/dict/set 取代 Group
+* 剔除冗余
+  * Control
+    * blit_myself
+  * Page
+    * draw
+    * draw_and_flip
+* 将 Page.update_a_local_control 整合进 Page.update_local_controls 并重命名为 Page.update_page_component
+* 追加 Page.do_sth_after_main_loop_ends 以使 Logo 和其他页面一样只需重写 loop_once 方法
+* 令 FadeIn 适配调整后的框架并通过测试
+
 ## v0.4
 
 * 将 framework 改名为 lega

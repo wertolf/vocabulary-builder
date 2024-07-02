@@ -59,7 +59,7 @@ class Button1(LabelButton):
 
         # 返回之后，需要重新绘制原来的页面
         self.is_focused = False  # 绘制之前，还原自己的颜色
-        page.do_sth_before_main_loop_start()
+        page.do_sth_before_main_loop_starts()
 
 
 class Button2(LabelButton):
@@ -78,7 +78,7 @@ class Button2(LabelButton):
 
         # 返回之后，需要重新绘制原来的页面
         self.is_focused = False  # 绘制之前，还原自己的颜色
-        page.do_sth_before_main_loop_start()
+        page.do_sth_before_main_loop_starts()
 
 
 class Button3(LabelButton):
@@ -94,7 +94,7 @@ class Button3(LabelButton):
 
         # 返回之后，需要重新绘制原来的页面
         self.is_focused = False  # 绘制之前，还原自己的颜色
-        page.do_sth_before_main_loop_start()
+        page.do_sth_before_main_loop_starts()
 
 
 class Button4(LabelButton):

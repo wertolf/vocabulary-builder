@@ -24,8 +24,10 @@ class Logo(Page):
             ),
         )
 
-    def run(self):
-        self.draw_and_flip()
-
-        # full-screen fade-out
-        FadeOut(scrmgr.screen, click_optional=True, count_down=1000).play()
+    def loop_once(self):
+        """
+        Logo 是一个没有循环的特殊页面，
+        为了保持设计上的统一，依然通过重写 loop_once 方法的方式达成目的，
+        进入第 1 次循环后立即将循环变量设置为 False 以达成目的
+        """
+        self.is_alive = False
